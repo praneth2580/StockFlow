@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "07ab2919-a2cb-4941-bad0-453f0d2fbbd5",
+		"name": "Google Sheets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33525950",
+		"_collection_link": "https://speeding-escape-658926.postman.co/workspace/My-Workspace~c71d1ef4-b6c4-4fe7-8d0a-e9e8e4dbf9fd/collection/33525950-07ab2919-a2cb-4941-bad0-453f0d2fbbd5?action=share&source=collection_link&creator=33525950"
+	},
+	"item": [
+		{
+			"name": "DATA",
+			"item": []
+		},
+		{
+			"name": "SHEETS",
+			"item": []
+		},
+		{
+			"name": "ADD",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"sheet\": \"Products\",\r\n  \"name\": \"Silk Saree\",\r\n  \"category\": \"Sarees\",\r\n  \"quantity\": 10,\r\n  \"costPrice\": 500,\r\n  \"sellingPrice\": 900,\r\n  \"supplierId\": \"2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://script.google.com/macros/s/{{SCRIPT-ID}}/exec",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"{{SCRIPT-ID}}",
+						"exec"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"name\":\"Charlie\",\"email\":\"charlie@example.com\"}' \\\r\n  \"https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":2,\"email\":\"newbob@example.com\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://script.google.com/macros/s/{{SCRIPT-ID}}/exec",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"{{SCRIPT-ID}}",
+						"exec"
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"id\":2,\"email\":\"newbob@example.com\"}' \\\r\n  \"https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://script.google.com/macros/s/{{SCRIPT-ID}}/exec?sheet=Orders&id=2",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"{{SCRIPT-ID}}",
+						"exec"
+					],
+					"query": [
+						{
+							"key": "sheet",
+							"value": "Orders"
+						},
+						{
+							"key": "id",
+							"value": "2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X DELETE \"https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?id=2\"\r\n"
+			},
+			"response": []
+		},
+		{
+			"name": "FETCH",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://script.google.com/macros/s/{{SCRIPT-ID}}/exec?sheet=Sheet1&gender=Female",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"{{SCRIPT-ID}}",
+						"exec"
+					],
+					"query": [
+						{
+							"key": "sheet",
+							"value": "Sheet1"
+						},
+						{
+							"key": "gender",
+							"value": "Female"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CREATE",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"sheet\":\"Orders\",\"name\":\"Order 1\",\"email\":\"test@example.com\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://script.google.com/macros/s/{{SCRIPT-ID}}/exec",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"{{SCRIPT-ID}}",
+						"exec"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"sheet\":\"Orders\",\"name\":\"Order 1\",\"email\":\"test@example.com\"}' \\\r\n  \"https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec\"\r\n"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SCRIPT-ID",
+			"value": ""
+		},
+		{
+			"key": "SCRIPT-URL",
+			"value": ""
+		}
+	]
+}
