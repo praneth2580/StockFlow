@@ -24,6 +24,7 @@ StockFlow is a modern inventory management system built with React, TypeScript, 
 - **Backend**: Google Apps Script
 - **Database**: Google Sheets
 - **Deployment**: GitHub Pages
+- **Design Tools**: Stitch AI Design Platform
 
 ## Prerequisites
 
@@ -49,10 +50,14 @@ Before you begin, ensure you have:
 
 3. **Configure Google Sheets Integration**
 
-   a. **Google Apps Script Project**
-   - Use our pre-configured Apps Script project:
-   - [StockFlow Google Apps Script Project](https://stitch.withgoogle.com/projects/9293421488052721907)
-   - Create a copy of the project for your own use
+   a. **Design Reference**
+   - View the UI/UX design mockups:
+   - [StockFlow UI Design in Stitch](https://stitch.withgoogle.com/projects/9293421488052721907)
+   - The design showcases the AI-powered interface and user flows
+   
+   b. **Google Apps Script Setup**
+   - Create a new Google Apps Script project
+   - Set up the necessary CRUD operations
    - Deploy the script as a web app and copy the Script ID
    
    b. **Google Sheets Setup**
