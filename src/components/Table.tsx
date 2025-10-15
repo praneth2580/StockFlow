@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 
 interface Column<T> {
   header: string;
-  accessor: keyof T;
+  accessor: keyof T | ((row: T) => React.ReactNode);
 }
 
 interface TableProps<T extends object> {
@@ -34,7 +34,9 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
     if (searchTerm) {
       filtered = filtered.filter(item =>
         columns.some(column => {
-          const value = item[column.accessor];
+          const value = typeof column.accessor === 'function' 
+            ? column.accessor(item)
+            : item[column.accessor];
           return value && value.toString().toLowerCase().includes(searchTerm.toLowerCase());
         })
       );
@@ -160,7 +162,7 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
               <tr key={rowIndex} className="hover:bg-gray-100">
                 {columns.map(col => (
                   <td key={String(col.accessor)} className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {String(row[col.accessor])}
+                    {typeof col.accessor === 'function' ? col.accessor(row) : String(row[col.accessor])}
                   </td>
                 ))}
               </tr>

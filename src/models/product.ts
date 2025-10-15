@@ -3,26 +3,18 @@
  * These functions interact with a Google Apps Script backend.
  */
 import type { IProduct } from '../types/models';
+import { jsonpRequest, SCRIPT_URL } from '../utls';
 
-const SCRIPT_ID = localStorage.getItem('VITE_GOOGLE_SCRIPT_ID');
-const SCRIPT_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
-
-export const getProducts = async (params: Record<string, string> = {}): Promise<IProduct[]> => {
-  if (!SCRIPT_ID) {
-    console.error('VITE_GOOGLE_SCRIPT_ID is not defined. Please set it in your environment variables.');
-    return [];
-  }
-
-  const query = new URLSearchParams({ sheet: 'Products', ...params }).toString();
-  const response = await fetch(`${SCRIPT_URL}?${query}`);
-  if (!response.ok) throw new Error('Failed to fetch products');
-  const { data } = await response.json();
-  return data as IProduct[];
+export const getProducts = (params: Record<string, string> = {}): Promise<IProduct[]> => {
+  return jsonpRequest<IProduct>("Products", params);
 };
 
 export const createProduct = async (product: Omit<IProduct, 'id' | 'createdAt' | 'updatedAt'>): Promise<IProduct> => {
   const response = await fetch(SCRIPT_URL, {
     method: 'POST',
+    mode: "no-cors", 
+    cache: "no-cache",
+    redirect: "follow", 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sheet: 'Products', ...product }),
   });

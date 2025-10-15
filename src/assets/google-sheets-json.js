@@ -57,7 +57,7 @@ function doGet(e) {
   // GET by ID
   if (e.parameter.id) {
     const record = rows.find(r => String(r.id) === String(e.parameter.id));
-    return respond(record || {});
+    return respondWithCors(record || {});
   }
 
   // Filter by field (e.g. ?sheet=Products&category=Saree)
@@ -66,7 +66,7 @@ function doGet(e) {
     ? rows.filter(r => filters.every(([key, val]) => String(r[key]) === String(val)))
     : rows;
 
-  return respond(filtered);
+  return respondWithCors(filtered);
 }
 
 // 🧩 Handle POST requests (create)
@@ -89,7 +89,7 @@ function doPost(e) {
   const newRow = headers.map(h => body[h] ?? '');
   sheet.appendRow(newRow);
 
-  return respond({ status: 'success', id: body.id, sheet: sheetName });
+  return respondWithCors({ status: 'success', id: body.id, sheet: sheetName });
 }
 
 // 🧩 Handle PUT requests (update)
@@ -109,11 +109,11 @@ function doPut(e) {
         if (h === 'updatedAt') sheet.getRange(i + 2, j + 1).setValue(now);
         else if (body[h] !== undefined) sheet.getRange(i + 2, j + 1).setValue(body[h]);
       });
-      return respond({ status: 'updated', id, sheet: sheetName });
+      return respondWithCors({ status: 'updated', id, sheet: sheetName });
     }
   }
 
-  return respond({ error: 'ID not found', sheet: sheetName });
+  return respondWithCors({ error: 'ID not found', sheet: sheetName });
 }
 
 // 🧩 Handle DELETE requests (remove)
@@ -126,15 +126,43 @@ function doDelete(e) {
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]) === id) {
       sheet.deleteRow(i + 1);
-      return respond({ status: 'deleted', id, sheet: sheetName });
+      return respondWithCors({ status: 'deleted', id, sheet: sheetName });
     }
   }
 
-  return respond({ error: 'ID not found', sheet: sheetName });
+  return respondWithCors({ error: 'ID not found', sheet: sheetName });
 }
 
-// 🧩 JSON Response Helper
-function respond(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj))
+// Centralize CORS headers (edit allowed headers/methods as needed)
+function getCorsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': '*', // or 'https://your-domain.com'
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With, Authorization'
+  };
+}
+
+// Handle preflight OPTIONS request (required for most non-GET fetches)
+function doOptions(e) {
+  const headers = getCorsHeaders();
+  // returning an empty 204 with headers is fine
+  return ContentService
+    .createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeader('Access-Control-Allow-Origin', headers['Access-Control-Allow-Origin'])
+    .setHeader('Access-Control-Allow-Methods', headers['Access-Control-Allow-Methods'])
+    .setHeader('Access-Control-Allow-Headers', headers['Access-Control-Allow-Headers']);
+}
+
+// Use this function to respond with JSON + CORS headers
+function respondWithCors(obj) {
+  const headers = getCorsHeaders();
+  const out = ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+
+  // setHeader is available on TextOutput
+  // out.setHeader('Access-Control-Allow-Origin', headers['Access-Control-Allow-Origin']);
+  // out.setHeader('Access-Control-Allow-Methods', headers['Access-Control-Allow-Methods']);
+  // out.setHeader('Access-Control-Allow-Headers', headers['Access-Control-Allow-Headers']);
+  return out;
 }

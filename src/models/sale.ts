@@ -3,21 +3,10 @@
  * These functions interact with a Google Apps Script backend.
  */
 import type { ISale } from '../types/models';
-
-const SCRIPT_ID = localStorage.getItem('VITE_GOOGLE_SCRIPT_ID');
-const SCRIPT_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
+import { jsonpRequest, SCRIPT_URL } from '../utls';
 
 export const getSales = async (params: Record<string, string> = {}): Promise<ISale[]> => {
-  if (!SCRIPT_ID) {
-    console.error('VITE_GOOGLE_SCRIPT_ID is not defined. Please set it in your environment variables.');
-    return [];
-  }
-  
-  const query = new URLSearchParams({ sheet: 'Sales', ...params }).toString();
-  const response = await fetch(`${SCRIPT_URL}?${query}`);
-  if (!response.ok) throw new Error('Failed to fetch sales');
-  const { data } = await response.json();
-  return data as ISale[];
+  return jsonpRequest<ISale>("Sales", params);
 };
 
 export const createSale = async (sale: Omit<ISale, 'id' | 'date'>): Promise<ISale> => {
