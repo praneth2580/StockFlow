@@ -3,6 +3,7 @@
 StockFlow is a modern inventory management system built with React, TypeScript, and Vite. It provides a user-friendly interface for managing products, tracking stock levels, and handling purchases and sales, all backed by Google Sheets as a database.
 
 🌐 **Live Demo**: [https://praneth2580.github.io/StockFlow/](https://praneth2580.github.io/StockFlow/)
+📊 **Backend**: [Google Apps Script Project](https://stitch.withgoogle.com/projects/9293421488052721907)
 
 ## Features
 
@@ -47,13 +48,29 @@ Before you begin, ensure you have:
    ```
 
 3. **Configure Google Sheets Integration**
-   - Set up a Google Sheets document
-   - Create a Google Apps Script project
-   - Set the script ID in your environment:
-     ```bash
-     # Create a .env file and add:
-     VITE_GOOGLE_SCRIPT_ID=your_script_id_here
-     ```
+
+   a. **Google Apps Script Project**
+   - Use our pre-configured Apps Script project:
+   - [StockFlow Google Apps Script Project](https://stitch.withgoogle.com/projects/9293421488052721907)
+   - Create a copy of the project for your own use
+   - Deploy the script as a web app and copy the Script ID
+   
+   b. **Google Sheets Setup**
+   - Create a new Google Sheets document
+   - Set up the following sheets:
+     - Products
+     - Sales
+     - Purchases
+     - Suppliers
+   - Share the sheet with the Apps Script project's service account
+   
+   c. **Environment Configuration**
+   ```bash
+   # Create a .env file and add:
+   VITE_GOOGLE_SCRIPT_ID=your_script_id_here  # From the deployed Apps Script
+   ```
+
+   For detailed setup instructions, check the `/src/assets/markdowns/getting-started/` directory.
 
 4. **Start the development server**
    ```bash
