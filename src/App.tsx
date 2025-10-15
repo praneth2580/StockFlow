@@ -39,8 +39,8 @@ const Layout = () => {
       </div>
       <nav className={`fixed top-0 left-0 h-full w-64 flex-shrink-0 bg-white border-r border-gray-200 p-5 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isNavOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center mb-5">
-          <img src="/vite.svg" alt="Brand Logo" className="h-8 mr-3" />
-          <span className="text-xl font-bold text-blue-500">Inventory Co.</span>
+          <img src="vite.svg" alt="Brand Logo" className="h-8 mr-3" />
+          <span className="text-xl font-bold text-blue-500">StockFlow</span>
         </div>
         <ul className="list-none p-0 m-0">
           {routeConfig.map((route) => (
