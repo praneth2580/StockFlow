@@ -4,7 +4,7 @@ import Table from '../components/Table';
 import Form from '../components/Form';
 import type { FormField } from '../components/Form';
 import { Product, type IProduct } from '../types/models';
-import { getProducts, createProduct, updateProduct, deleteProduct } from '../models/product';
+import { getProducts, createProduct, deleteProduct } from '../models/product';
 
 const InventoryPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
