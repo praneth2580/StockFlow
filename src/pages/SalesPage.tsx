@@ -3,7 +3,7 @@ import Table from '../components/Table';
 import Form from '../components/Form';
 import type { FormField } from '../components/Form';
 import type { ISale } from '../types/models';
-import { getSales, createSale, updateSale, deleteSale } from '../models/sale';
+import { getSales, createSale, deleteSale } from '../models/sale';
 
 const SalesPage = () => {
   const [sales, setSales] = useState<ISale[]>([]);

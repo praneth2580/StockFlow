@@ -3,7 +3,7 @@
 StockFlow is a modern inventory management system built with React, TypeScript, and Vite. It provides a user-friendly interface for managing products, tracking stock levels, and handling purchases and sales, all backed by Google Sheets as a database.
 
 🌐 **Live Demo**: [https://praneth2580.github.io/StockFlow/](https://praneth2580.github.io/StockFlow/)
-📊 **Backend**: [Google Apps Script Project](https://stitch.withgoogle.com/projects/9293421488052721907)
+🎨 **UI Design**: [View UI/UX Design in Stitch](https://stitch.withgoogle.com/projects/9293421488052721907)
 
 ## Features
 
