@@ -6,8 +6,8 @@ export const routeConfig = [
     icon: '/vite.svg',
   },
   {
-    path: '/inventory',
-    name: 'Inventory',
+    path: '/product',
+    name: 'Product',
     icon: '/vite.svg',
   },
   {

@@ -44,3 +44,16 @@ export function jsonpRequest<T>(
     document.body.appendChild(script);
   });
 }
+
+export function parseAttributes(input: string): Record<string, string> {
+  try {
+    return JSON.parse(input);
+  } catch {
+    return Object.fromEntries(
+      input.split(",")
+        .map(p => p.split("="))
+        .filter(([k, v]) => k && v)
+        .map(([k, v]) => [k.trim(), v.trim()])
+    );
+  }
+}

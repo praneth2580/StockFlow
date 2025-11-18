@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Routes, Route, NavLink, Outlet } from 'react-router-dom';
+import { Routes, Route, NavLink, Outlet, Navigate } from 'react-router-dom';
 import { routeConfig } from './routes';
 import AboutPage from './pages/AboutPage';
 import DashboardPage from './pages/DashboardPage';
 import HelpPage from './pages/HelpPage';
-import InventoryPage from './pages/InventoryPage';
+import ProductPage from './pages/ProductPage';
 import PurchasesPage from './pages/PurchasesPage';
 import ReportsPage from './pages/ReportsPage';
 import SalesPage from './pages/SalesPage';
@@ -13,7 +13,7 @@ import SuppliersPage from './pages/SuppliersPage';
 
 const pageComponents: { [key: string]: React.ComponentType } = {
   'Dashboard': DashboardPage,
-  'Inventory': InventoryPage,
+  'Product': ProductPage,
   'Sales': SalesPage,
   'Purchases': PurchasesPage,
   'Suppliers': SuppliersPage,
@@ -39,7 +39,7 @@ const Layout = () => {
       </div>
       <nav className={`fixed top-0 left-0 h-full w-64 flex-shrink-0 bg-white border-r border-gray-200 p-5 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isNavOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center mb-5">
-          <img src="/vite.svg" alt="Brand Logo" className="h-8 mr-3" />
+          <img src="vite.svg" alt="Brand Logo" className="h-8 mr-3" />
           <span className="text-xl font-bold text-blue-500">Inventory Co.</span>
         </div>
         <ul className="list-none p-0 m-0">
@@ -48,8 +48,7 @@ const Layout = () => {
               <NavLink
                 to={route.path}
                 className={({ isActive }) =>
-                  `block p-4 text-gray-700 rounded-lg mb-2 transition-colors duration-300 ${
-                    isActive ? 'bg-blue-100 text-blue-500 font-bold' : 'hover:bg-blue-100 hover:text-blue-500'
+                  `block p-4 text-gray-700 rounded-lg mb-2 transition-colors duration-300 ${isActive ? 'bg-blue-100 text-blue-500 font-bold' : 'hover:bg-blue-100 hover:text-blue-500'
                   }`
                 }
                 onClick={() => setIsNavOpen(false)}
@@ -67,6 +66,19 @@ const Layout = () => {
     </div>
   );
 };
+
+const ProtectedRoute = ({
+  isAllowed,
+  children,
+}: {
+  isAllowed: boolean;
+  children: React.ReactNode;
+}) => {
+  if (!isAllowed) {
+    return <Navigate to="/" replace />;
+  }
+  return <>{children}</>;
+}
 
 function App() {
 
@@ -92,19 +104,45 @@ function App() {
   });
 
 
+  // return (
+  //   <Routes>
+  //     <Route path="/" element={<Layout />}>
+  //       {routeConfig.map((route) => {
+  //         const Component = pageComponents[route.name];
+  //         if (!Component) {
+  //           return null;
+  //         }
+  //         if (route.path === '/' || isScriptIDPresent === false) {
+  //           console.error(isScriptIDPresent === false ? 'Path not present' : 'Script ID not present');
+  //           alert(isScriptIDPresent === false ? 'Path not present' : 'Script ID not present')
+  //           return <Route key={route.path} index element={<Component />} />;
+  //         }
+  //         return <Route key={route.path} path={route.path.substring(1)} element={<Component />} />;
+  //       })}
+  //     </Route>
+  //   </Routes>
+  // );
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        {/* Home route — always allowed */}
+        <Route index element={<DashboardPage />} />
+
         {routeConfig.map((route) => {
           const Component = pageComponents[route.name];
-          if (!Component) {
-            return null;
-          }
-          if (route.path === '/' || isScriptIDPresent === false) {
-            console.error(isScriptIDPresent === false ? 'Path not present' : 'Script ID not present') 
-            return <Route key={route.path} index element={<Component />} />;
-          }
-          return <Route key={route.path} path={route.path.substring(1)} element={<Component />} />;
+          if (!Component || route.path === "/") return null;
+
+          return (
+            <Route
+              key={route.path}
+              path={route.path.substring(1)}
+              element={
+                <ProtectedRoute isAllowed={isScriptIDPresent}>
+                  <Component />
+                </ProtectedRoute>
+              }
+            />
+          );
         })}
       </Route>
     </Routes>

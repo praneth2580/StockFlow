@@ -3,7 +3,7 @@
  * These functions interact with a Google Apps Script backend.
  */
 import type { IPurchase } from '../types/models';
-import { jsonpRequest, SCRIPT_URL } from '../utls';
+import { jsonpRequest, SCRIPT_URL } from '../utils';
 
 export const getPurchases = async (params: Record<string, string> = {}): Promise<IPurchase[]> => {
   return jsonpRequest<IPurchase>("Purchases", params);
