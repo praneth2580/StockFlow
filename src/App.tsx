@@ -20,8 +20,10 @@ const Layout = () => {
       </div>
       <nav className={`fixed top-0 left-0 h-full w-64 flex-shrink-0 bg-white border-r border-gray-200 p-5 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isNavOpen ? 'translate-x-0 z-50' : '-translate-x-full'}`}>
         <div className="flex items-center mb-5">
-          <img src="vite.svg" alt="Brand Logo" className="h-8 mr-3" />
-          <span className="text-xl font-bold text-blue-500">Inventory Co.</span>
+          <div className="bg-[url(banner.png)] w-full h-15 mr-3 bg-cover bg-center rounded" />
+          {/* <img src="banner.png" alt="Brand Logo" className="w-full h-15 mr-3 bg-cover bg-center" /> */}
+          {/* <img src="logo.png" alt="Brand Logo" className="h-8 mr-3" /> */}
+          {/* <span className="text-xl font-bold text-blue-500">Storix</span> */}
         </div>
         <ul className="list-none p-0 m-0">
           {routeConfig.map((route) => (
@@ -41,10 +43,12 @@ const Layout = () => {
           <li key="/pos">
             <NavLink
               to="/pos"
+              target="_blank" rel="noopener noreferrer"
               className={({ isActive }) =>
                 `block p-4 bg-blue-400 text-white text-center font-bold rounded-lg mb-2 transition-colors duration-300 ${isActive ? 'bg-blue-100 text-blue-500 font-bold' : 'hover:bg-blue-100 hover:text-blue-500'
                 }`
               }
+              
               onClick={() => setIsNavOpen(false)}
             >
               POS

@@ -36,7 +36,8 @@ export const JSONInput: React.FC<JSONInputProps> = ({
   // Add new row
   const addRow = useCallback(() => {
     const newRows = [...rows, ["", ""]];
-    setRows(newRows);
+    const converted = newRows.filter((r): r is [string, JSONValue] => Array.isArray(r) && r.length === 2);
+    setRows(converted);
   }, [rows]);
 
   // Remove row

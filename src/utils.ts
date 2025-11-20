@@ -49,8 +49,6 @@ export function jsonpRequest<T>(
 }
 
 export function parseAttributes(input: string): Record<string, string> {
-  if (!input || (input && typeof input === 'object')) return input;
-
   try {
     return JSON.parse(input);
   } catch {

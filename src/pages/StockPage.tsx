@@ -3,9 +3,9 @@ import { useState, useEffect } from 'react';
 import Table from '../components/Table';
 import Form from '../components/Form';
 import type { FormField } from '../components/Form';
-import { Product, Stock, Variant, type IProduct, type IStock, type IVariant } from '../types/models';
-import { getProducts, createProduct, deleteProduct } from '../models/product';
-import { createVariant, deleteVariant, getVariants } from '../models/variants';
+import { Product, Stock, Variant, type IStock } from '../types/models';
+import { getProducts } from '../models/product';
+import { getVariants } from '../models/variants';
 import Modal from '../components/Modal';
 import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
 import { createStock, getStocks } from '../models/stock';
@@ -118,23 +118,11 @@ const StockPage = () => {
 
     const handleDeleteInitiated = (id: string) => {
         setConfirmModalData({
-            title: 'Confirm Action',
+            title: 'Confirm Action' + id,
             body: 'Do you want to delete this Product',
-            onSuccess: () => handleDeleteStock(id)
+            onSuccess: () => {}
         })
     }
-
-    const handleDeleteStock = async (id: string) => {
-        // try {
-        //     setError(null);
-        //     setLoading(true);
-        //     setConfirmModalData(null);
-        //     await deleteProduct(id);
-        //     await loadStocks(); // Refresh the list
-        // } catch (err) {
-        //     setError(err instanceof Error ? err.message : 'Failed to delete product');
-        // }
-    };
 
     return (
         <>

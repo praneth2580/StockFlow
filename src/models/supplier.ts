@@ -3,7 +3,7 @@
  * These functions interact with a Google Apps Script backend.
  */
 import type { ISupplier } from '../types/models';
-import { jsonpRequest, SCRIPT_URL } from '../utils';
+import { jsonpRequest } from '../utils';
 
 /**
  * GET Suppliers (with optional filters)

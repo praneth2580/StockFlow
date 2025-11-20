@@ -8,6 +8,7 @@ import { getProducts, createProduct, deleteProduct, updateProduct } from '../mod
 import { createVariant, deleteVariant, getVariants, updateVariant } from '../models/variants';
 import Modal from '../components/Modal';
 import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
+import { formatOptions } from '../utils';
 
 const ProductPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -85,10 +86,10 @@ const ProductPage = () => {
 
     const productFormFields: FormField<Product>[] = [
         { name: 'name', label: 'Product Name', type: 'text' },
-        { name: 'category', label: 'Category', type: 'select', options: ['Electronics', 'Furniture', 'Kitchenware', 'Stationery'] },
+        { name: 'category', label: 'Category', type: 'select', options: formatOptions(['Electronics', 'Furniture', 'Kitchenware', 'Stationery']) },
         { name: 'description', label: 'Description', type: 'text' },
-        { name: 'type', label: 'Type', type: 'select', options: ['simple', 'measured', 'variant'] },
-        { name: 'hasVariants', label: 'Has Variants', type: 'radio', options: ['True', 'False'] },
+        { name: 'type', label: 'Type', type: 'select', options: formatOptions(['simple', 'measured', 'variant']) },
+        { name: 'hasVariants', label: 'Has Variants', type: 'radio', options: [{ label: 'True', value: 'true' }, { label: 'False', value: 'false' }] },
         { name: 'barcode', label: 'Barcode', type: 'text' },
         { name: 'baseUnit', label: 'Base Unit', type: 'text' },
         { name: 'defaultCostPrice', label: 'Default Cost Price', type: 'number' },

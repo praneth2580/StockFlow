@@ -1,8 +1,8 @@
-# StockFlow - Inventory Management System
+# Storix - Inventory Management System
 
-StockFlow is a modern inventory management system built with React, TypeScript, and Vite. It provides a user-friendly interface for managing products, tracking stock levels, and handling purchases and sales, all backed by Google Sheets as a database.
+Storix is a modern inventory management system built with React, TypeScript, and Vite. It provides a user-friendly interface for managing products, tracking stock levels, and handling purchases and sales, all backed by Google Sheets as a database.
 
-🌐 **Live Demo**: [https://praneth2580.github.io/StockFlow/](https://praneth2580.github.io/StockFlow/)
+🌐 **Live Demo**: [https://praneth2580.github.io/Storix/](https://praneth2580.github.io/Storix/)
 
 ## Features
 
@@ -37,8 +37,8 @@ Before you begin, ensure you have:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/praneth2580/StockFlow.git
-   cd StockFlow
+   git clone https://github.com/praneth2580/Storix.git
+   cd Storix
    ```
 
 2. **Install dependencies**
@@ -78,7 +78,7 @@ The project is configured for GitHub Pages deployment. To deploy:
    npm run deploy
    ```
 3. The site will be automatically built and deployed to the `gh-pages` branch
-4. Access your site at `https://[username].github.io/StockFlow/`
+4. Access your site at `https://[username].github.io/Storix/`
 
 ## Project Structure
 

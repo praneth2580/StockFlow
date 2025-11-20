@@ -2,51 +2,51 @@ export const routeConfig = [
   {
     path: '/',
     name: 'Dashboard',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/product',
     name: 'Product',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/stock',
     name: 'Stock',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/sales',
     name: 'Sales',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/purchases',
     name: 'Purchases',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/suppliers',
     name: 'Suppliers',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/reports',
     name: 'Reports',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/settings',
     name: 'Settings',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/help',
     name: 'Help',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
   {
     path: '/about',
     name: 'About',
-    icon: '/vite.svg',
+    icon: '/logo.png',
   },
 ];
