@@ -50,7 +50,8 @@ export default defineConfig({
         theme_color: "#0a70e6",
         background_color: "#0a70e6",
         display: "standalone",
-        // start_url: "/",
+        start_url: "/Storix/",
+        scope: "/Storix/",
         icons: [
           {
             "src": "android-chrome-192x192.png",
