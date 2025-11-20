@@ -1,16 +1,16 @@
 /**
  * @file CRUD functions for Product model using Google Apps Script GET API
  */
-import type { IProduct } from '../types/models.ts';
+import type { IStock } from '../types/models.ts';
 import { jsonpRequest } from '../utils.ts';
 
 /**
- * GET Products (with optional filters)
+ * GET Stock (with optional filters)
  */
-export const getProducts = async (
+export const getStocks = async (
   params: Record<string, string> = {}
-): Promise<IProduct[]> => {
-  return jsonpRequest<IProduct>('Products', {
+): Promise<IStock[]> => {
+  return jsonpRequest<IStock>('Stock', {
     action: "get",
     ...params,
   });
@@ -20,15 +20,15 @@ export const getProducts = async (
 /**
  * CREATE Product  
  * Uses action=create  
- * Sends ?action=create&sheet=Products&data={}
+ * Sends ?action=create&sheet=Stock&data={}
  */
-export const createProduct = async (
-  product: Omit<IProduct, 'id' | 'createdAt' | 'updatedAt'>
+export const createStock = async (
+  stock: Omit<IStock, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<{ id: string }> => {
 
-  const result = await jsonpRequest<{ id: string }>('Products', {
+  const result = await jsonpRequest<{ id: string }>('Stock', {
     action: "create",
-    data: JSON.stringify(product),
+    data: JSON.stringify(stock),
   });
 
   // result is an array → return first item
@@ -40,12 +40,12 @@ export const createProduct = async (
  * UPDATE Product  
  * Uses action=update&id=123&data={}
  */
-export const updateProduct = async (
-  product: Partial<IProduct> & { id: string }
+export const updateStock = async (
+  stock: Partial<IStock> & { id: string }
 ): Promise<{ status: string }> => {
-  const { id, ...rest } = product;
+  const { id, ...rest } = stock;
 
-  const result = await jsonpRequest<{ status: string }>('Products', {
+  const result = await jsonpRequest<{ status: string }>('Stock', {
     action: "update",
     id,
     data: JSON.stringify(rest),
@@ -58,11 +58,11 @@ export const updateProduct = async (
  * DELETE Product  
  * Uses action=delete&id=123
  */
-export const deleteProduct = async (
+export const deleteStock = async (
   id: string
 ): Promise<{ status: string }> => {
 
-  const result = await jsonpRequest<{ status: string }>('Products', {
+  const result = await jsonpRequest<{ status: string }>('Stock', {
     action: "delete",
     id,
   });

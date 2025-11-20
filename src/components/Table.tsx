@@ -12,6 +12,33 @@ interface TableProps<T extends object> {
   itemsPerPage?: number;
 }
 
+function deepGet(obj: any, path: string): any {
+  return path
+    .split(".")
+    .reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
+}
+
+function getValue<T>(
+  row: T,
+  accessor: string | number | symbol | ((r: T) => any)
+): any {
+  // Case 1: function accessor
+  if (typeof accessor === "function") {
+    return accessor(row);
+  }
+
+  // Convert number or symbol to string
+  const key = String(accessor);
+
+  // Case 2: deep path (ex: "product.category.name")
+  if (key.includes(".")) {
+    return deepGet(row, key);
+  }
+
+  // Case 3: direct accessor
+  return (row as any)[key];
+}
+
 const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProps<T>) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -162,7 +189,8 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
               <tr key={rowIndex} className="hover:bg-gray-100">
                 {columns.map(col => (
                   <td key={String(col.accessor)} className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {typeof col.accessor === 'function' ? col.accessor(row) : String(row[col.accessor])}
+                    {/* {typeof col.accessor === 'function' ? col.accessor(row) : col.accessor.toString().includes(".") ? String(row[col.accessor.toString().split(".")[0]][col.accessor.toString().split(".")[1]]) : String(row[col.accessor])} */}
+                    {getValue(row, col.accessor)}
                   </td>
                 ))}
               </tr>

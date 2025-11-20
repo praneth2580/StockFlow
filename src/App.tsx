@@ -1,27 +1,8 @@
 import { useState } from 'react';
 import { Routes, Route, NavLink, Outlet, Navigate } from 'react-router-dom';
 import { routeConfig } from './routes';
-import AboutPage from './pages/AboutPage';
 import DashboardPage from './pages/DashboardPage';
-import HelpPage from './pages/HelpPage';
-import ProductPage from './pages/ProductPage';
-import PurchasesPage from './pages/PurchasesPage';
-import ReportsPage from './pages/ReportsPage';
-import SalesPage from './pages/SalesPage';
-import SettingsPage from './pages/SettingsPage';
-import SuppliersPage from './pages/SuppliersPage';
-
-const pageComponents: { [key: string]: React.ComponentType } = {
-  'Dashboard': DashboardPage,
-  'Product': ProductPage,
-  'Sales': SalesPage,
-  'Purchases': PurchasesPage,
-  'Suppliers': SuppliersPage,
-  'Reports': ReportsPage,
-  'Settings': SettingsPage,
-  'Help': HelpPage,
-  'About': AboutPage,
-};
+import POSPage from './pages/POSPage';
 
 const Layout = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -37,7 +18,7 @@ const Layout = () => {
           &#9776;
         </button>
       </div>
-      <nav className={`fixed top-0 left-0 h-full w-64 flex-shrink-0 bg-white border-r border-gray-200 p-5 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isNavOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <nav className={`fixed top-0 left-0 h-full w-64 flex-shrink-0 bg-white border-r border-gray-200 p-5 flex flex-col transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isNavOpen ? 'translate-x-0 z-50' : '-translate-x-full'}`}>
         <div className="flex items-center mb-5">
           <img src="vite.svg" alt="Brand Logo" className="h-8 mr-3" />
           <span className="text-xl font-bold text-blue-500">Inventory Co.</span>
@@ -57,9 +38,21 @@ const Layout = () => {
               </NavLink>
             </li>
           ))}
+          <li key="/pos">
+            <NavLink
+              to="/pos"
+              className={({ isActive }) =>
+                `block p-4 bg-blue-400 text-white text-center font-bold rounded-lg mb-2 transition-colors duration-300 ${isActive ? 'bg-blue-100 text-blue-500 font-bold' : 'hover:bg-blue-100 hover:text-blue-500'
+                }`
+              }
+              onClick={() => setIsNavOpen(false)}
+            >
+              POS
+            </NavLink>
+          </li>
         </ul>
       </nav>
-      {isNavOpen && <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={toggleNav}></div>}
+      {isNavOpen && <div className="fixed inset-0 bg-black opacity-50 z-40 md:hidden" onClick={toggleNav}></div>}
       <main className="flex-grow p-5 overflow-y-auto mt-12 md:mt-0">
         <Outlet />
       </main>
@@ -81,7 +74,6 @@ const ProtectedRoute = ({
 }
 
 function App() {
-
   const [isScriptIDPresent, setIsScriptIDPresent] = useState<boolean>(true);
 
   // Check localStorage for 'hideGettingStarted' on initial load
@@ -103,25 +95,6 @@ function App() {
     return () => window.removeEventListener('storage', handleStorageChange);
   });
 
-
-  // return (
-  //   <Routes>
-  //     <Route path="/" element={<Layout />}>
-  //       {routeConfig.map((route) => {
-  //         const Component = pageComponents[route.name];
-  //         if (!Component) {
-  //           return null;
-  //         }
-  //         if (route.path === '/' || isScriptIDPresent === false) {
-  //           console.error(isScriptIDPresent === false ? 'Path not present' : 'Script ID not present');
-  //           alert(isScriptIDPresent === false ? 'Path not present' : 'Script ID not present')
-  //           return <Route key={route.path} index element={<Component />} />;
-  //         }
-  //         return <Route key={route.path} path={route.path.substring(1)} element={<Component />} />;
-  //       })}
-  //     </Route>
-  //   </Routes>
-  // );
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -129,7 +102,8 @@ function App() {
         <Route index element={<DashboardPage />} />
 
         {routeConfig.map((route) => {
-          const Component = pageComponents[route.name];
+          // const Component = pageComponents[route.name];
+          const Component = route.component;
           if (!Component || route.path === "/") return null;
 
           return (
@@ -145,6 +119,15 @@ function App() {
           );
         })}
       </Route>
+      <Route
+        key='/pos'
+        path="pos"
+        element={
+          <ProtectedRoute isAllowed={isScriptIDPresent}>
+            <POSPage />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

@@ -5,35 +5,66 @@
 import type { ISupplier } from '../types/models';
 import { jsonpRequest, SCRIPT_URL } from '../utils';
 
-export const getSuppliers = async (params: Record<string, string> = {}): Promise<ISupplier[]> => {
-  return jsonpRequest<ISupplier>("Suppliers", params);
-};
-
-export const createSupplier = async (supplier: Omit<ISupplier, 'id' | 'createdAt' | 'updatedAt'>): Promise<ISupplier> => {
-  const response = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sheet: 'Suppliers', ...supplier }),
+/**
+ * GET Suppliers (with optional filters)
+ */
+export const getSuppliers = async (
+  params: Record<string, string> = {}
+): Promise<ISupplier[]> => {
+  return jsonpRequest<ISupplier>('Suppliers', {
+    action: "get",
+    ...params,
   });
-  if (!response.ok) throw new Error('Failed to create supplier');
-  const { data } = await response.json();
-  return data as ISupplier;
 };
 
-export const updateSupplier = async (supplier: Partial<ISupplier> & { id: string }): Promise<ISupplier> => {
-  const response = await fetch(SCRIPT_URL, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ sheet: 'Suppliers', ...supplier }),
+/**
+ * CREATE Supplier  
+ * Uses action=create  
+ * Sends ?action=create&sheet=Suppliers&data={}
+ */
+export const createSupplier = async (
+  supplier: Omit<ISupplier, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<{ id: string }> => {
+
+  const result = await jsonpRequest<{ id: string }>('Suppliers', {
+    action: "create",
+    data: JSON.stringify(supplier),
   });
-  if (!response.ok) throw new Error('Failed to update supplier');
-  const { data } = await response.json();
-  return data as ISupplier;
+
+  // result is an array → return first item
+  return result[0];
 };
 
-export const deleteSupplier = async (id: string): Promise<{ success: boolean }> => {
-  const query = new URLSearchParams({ sheet: 'Suppliers', id }).toString();
-  const response = await fetch(`${SCRIPT_URL}?${query}`, { method: 'DELETE' });
-  if (!response.ok) throw new Error('Failed to delete supplier');
-  return await response.json();
+/**
+ * UPDATE Supplier  
+ * Uses action=update&id=123&data={}
+ */
+export const updateSupplier = async (
+  supplier: Partial<ISupplier> & { id: string }
+): Promise<{ status: string }> => {
+  const { id, ...rest } = supplier;
+
+  const result = await jsonpRequest<{ status: string }>('Suppliers', {
+    action: "update",
+    id,
+    data: JSON.stringify(rest),
+  });
+
+  return result[0]
+};
+
+/**
+ * DELETE Product  
+ * Uses action=delete&id=123
+ */
+export const deleteSupplier = async (
+  id: string
+): Promise<{ status: string }> => {
+
+  const result = await jsonpRequest<{ status: string }>('Suppliers', {
+    action: "delete",
+    id,
+  });
+
+  return result[0]
 };

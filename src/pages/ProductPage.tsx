@@ -4,20 +4,31 @@ import Table from '../components/Table';
 import Form from '../components/Form';
 import type { FormField } from '../components/Form';
 import { Product, Variant, type IProduct, type IVariant } from '../types/models';
-import { getProducts, createProduct, deleteProduct } from '../models/product';
-import { createVariant, deleteVariant, getVariants } from '../models/variants';
+import { getProducts, createProduct, deleteProduct, updateProduct } from '../models/product';
+import { createVariant, deleteVariant, getVariants, updateVariant } from '../models/variants';
 import Modal from '../components/Modal';
+import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
 
 const ProductPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedProduct, setSelectedProduct] = useState<string | null>(null)
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [editProduct, setEditProduct] = useState<Product | null>(null);
+    const [confirmModalData, setConfirmModalData] = useState<ModalData | null>(null);
 
     useEffect(() => {
         loadProducts();
     }, []);
+
+    useEffect(() => {
+        if (editProduct != null && !showModal) setShowModal(true);
+    }, [editProduct]);
+
+    useEffect(() => {
+        if (!showModal) setEditProduct(null);
+    }, [showModal]);
 
     const loadProducts = async () => {
         try {
@@ -54,12 +65,20 @@ const ProductPage = () => {
         {
             header: 'Actions',
             accessor: (row: Product) => (
-                <button
-                    onClick={() => handleDeleteProduct(row.id)}
-                    className="text-red-600 hover:text-red-800"
-                >
-                    Delete
-                </button>
+                <div className='flex gap-2'>
+                    <button
+                        onClick={() => setEditProduct(row)}
+                        className="text-blue-600 hover:text-blue-800"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => handleDeleteInitiated(row.id)}
+                        className="text-red-600 hover:text-red-800"
+                    >
+                        Delete
+                    </button>
+                </div>
             )
         }
     ];
@@ -79,6 +98,7 @@ const ProductPage = () => {
     const handleAddProduct = async (formData: Partial<IProduct>) => {
         try {
             setError(null);
+            setLoading(true);
             const productData = {
                 name: formData.name || '',
                 category: formData.category || '',
@@ -99,9 +119,46 @@ const ProductPage = () => {
         }
     };
 
+    const handleUpdateProduct = async (formData: Partial<IProduct>) => {
+        try {
+            setError(null);
+            setLoading(true);
+            const productData = {
+                id: formData.id || '',
+                name: formData.name || '',
+                category: formData.category || '',
+                description: formData.description,
+                type: formData.type || 'simple',
+                hasVariants: formData.hasVariants || false,
+                barcode: formData.barcode,
+                baseUnit: formData.baseUnit,
+                defaultCostPrice: formData.defaultCostPrice || 0,
+                defaultSellingPrice: formData.defaultSellingPrice || 0,
+                createdAt: formData.createdAt,
+                updatedAt: new Date().toISOString()
+            };
+
+            await updateProduct(productData);
+            await loadProducts(); // Refresh the list
+            setShowModal(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to add product');
+        }
+    };
+
+    const handleDeleteInitiated = (id: string) => {
+        setConfirmModalData({
+            title: 'Confirm Action',
+            body: 'Do you want to delete this Product',
+            onSuccess: () => handleDeleteProduct(id)
+        })
+    }
+
     const handleDeleteProduct = async (id: string) => {
         try {
             setError(null);
+            setLoading(true);
+            setConfirmModalData(null);
             await deleteProduct(id);
             await loadProducts(); // Refresh the list
         } catch (err) {
@@ -119,97 +176,79 @@ const ProductPage = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Product</h1>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                    Add Product
-                </button>
-            </div>
-
-            {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {error}
-                </div>
-            )}
-
+        <>
             {loading ? (
                 <div className="flex justify-center items-center h-32">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                 </div>
             ) : (
-                <Table
-                    columns={columns}
-                    data={products}
-                />
-            )}
-
-            {/* {showModal && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-                    <div className="relative mx-auto p-5 border shadow-lg rounded-md bg-white">
-                        <div className="mt-3 text-center">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">Add New Product</h3>
-                            <div className="mt-2 px-7 py-3">
-                                <Form
-                                    fields={productFormFields}
-                                    onSubmit={handleAddProduct}
-                                    onClose={() => setShowModal(false)}
-                                    initialData={new Product({
-                                        id: '',
-                                        name: '',
-                                        category: '',
-                                        description: '',
-                                        type: 'simple',
-                                        hasVariants: false,
-                                        barcode: '',
-                                        baseUnit: '',
-                                        defaultCostPrice: 0,
-                                        defaultSellingPrice: 0,
-                                        createdAt: new Date().toISOString(),
-                                        updatedAt: new Date().toISOString()
-                                    })}
-                                />
-                            </div>
-                        </div>
+                <div className="container mx-auto p-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold">Product</h1>
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Add Product
+                        </button>
                     </div>
+
+                    {error && (
+                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            {error}
+                        </div>
+                    )}
+
+                    {loading ? <></> : (
+                        <Table
+                            columns={columns}
+                            data={products}
+                        />
+                    )}
+
+                    <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
+                        <Form<Product>
+                            fields={productFormFields}
+                            onSubmit={editProduct ? handleUpdateProduct : handleAddProduct}
+                            onClose={() => setShowModal(false)}
+                            initialData={editProduct ? editProduct : new Product({
+                                id: '',
+                                name: '',
+                                category: '',
+                                description: '',
+                                type: 'simple',
+                                hasVariants: false,
+                                barcode: '',
+                                baseUnit: '',
+                                defaultCostPrice: 0,
+                                defaultSellingPrice: 0,
+                                createdAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString()
+                            })}
+                        />
+                    </Modal>
+
+                    <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
+                        <VariantsPage product_id={selectedProduct || ''} />
+                    </Modal>
+                    <ConfirmModal
+                        show={confirmModalData != null}
+                        size='sm'
+                        onClose={() => setConfirmModalData(null)}
+                        title={confirmModalData?.title || ""}
+                        body={confirmModalData?.body || ""}
+                        onSuccess={confirmModalData?.onSuccess}
+                    />
                 </div>
-            )} */}
-
-            <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
-                <Form
-                    fields={productFormFields}
-                    onSubmit={handleAddProduct}
-                    onClose={() => setShowModal(false)}
-                    initialData={new Product({
-                        id: '',
-                        name: '',
-                        category: '',
-                        description: '',
-                        type: 'simple',
-                        hasVariants: false,
-                        barcode: '',
-                        baseUnit: '',
-                        defaultCostPrice: 0,
-                        defaultSellingPrice: 0,
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
-                    })}
-                />
-            </Modal>
-
-            <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
-                <VariantsPage product_id={selectedProduct} />
-            </Modal>
-        </div>
+            )}
+        </>
     );
 };
 
 const VariantsPage = ({ product_id }: { product_id: string }) => {
     const [variants, setVariants] = useState<Variant[]>([]);
     const [loading, setLoading] = useState(true);
+    const [editVariant, setEditVariant] = useState<Variant | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [showForm, setShowForm] = useState(false);
 
@@ -217,11 +256,19 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
         loadVariants();
     }, []);
 
+    useEffect(() => {
+        if (editVariant != null && !showForm) setShowForm(true);
+    }, [editVariant]);
+
+    useEffect(() => {
+        if (!showForm) setEditVariant(null);
+    }, [showForm]);
+
     const loadVariants = async () => {
         try {
             setLoading(true);
             setError(null);
-            const fetchedVariants = await getVariants();
+            const fetchedVariants = await getVariants({ 'productId': product_id });
             setVariants(fetchedVariants.map(p => new Variant(p)));
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to load products');
@@ -245,19 +292,27 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
         {
             header: 'Actions',
             accessor: (row: Variant) => (
-                <button
-                    onClick={() => handleDeleteVariant(row.id)}
-                    className="text-red-600 hover:text-red-800"
-                >
-                    Delete
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setEditVariant(row)}
+                        className="text-blue-600 hover:text-blue-800"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => handleDeleteVariant(row.id)}
+                        className="text-red-600 hover:text-red-800"
+                    >
+                        Delete
+                    </button>
+                </div>
             )
         }
     ];
 
     const variantFormFields: FormField<Variant>[] = [
         { name: 'sku', label: 'SKU', type: 'text' },
-        { name: 'attributes', label: 'Attributes', type: 'text' },
+        { name: 'attributes', label: 'Attributes', type: 'json' },
         { name: 'costPrice', label: 'Cost Price', type: 'number' },
         { name: 'sellingPrice', label: 'Selling Price', type: 'number' },
     ];
@@ -265,6 +320,7 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
     const handleAddProduct = async (formData: Partial<IVariant>) => {
         try {
             setError(null);
+            setLoading(true);
             const variantData = {
                 productId: product_id,
                 sku: formData.sku,
@@ -283,9 +339,33 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
         }
     };
 
+    const handleUpdateProduct = async (formData: Partial<IVariant>) => {
+        try {
+            setError(null);
+            setLoading(true);
+            const variantData = {
+                id: formData.id || '',
+                productId: product_id,
+                sku: formData.sku,
+                attributes: formData.attributes || {},
+                costPrice: formData.costPrice,
+                sellingPrice: formData.sellingPrice,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            await updateVariant(variantData);
+            await loadVariants(); // Refresh the list
+            setShowForm(false);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Failed to add product');
+        }
+    };
+
     const handleDeleteVariant = async (id: string) => {
         try {
             setError(null);
+            setLoading(true);
             await deleteVariant(id);
             await loadVariants(); // Refresh the list
         } catch (err) {
@@ -299,21 +379,17 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
                 <>
                     <h3 className="text-lg leading-6 font-medium text-gray-900 text-center">Add New Variant</h3>
                     <div className="mt-2 px-7 py-3">
-                        <Form
+                        <Form<Variant>
                             fields={variantFormFields}
-                            onSubmit={handleAddProduct}
+                            onSubmit={editVariant ? handleUpdateProduct : handleAddProduct}
                             onClose={() => setShowForm(false)}
-                            initialData={new Product({
+                            initialData={editVariant ? editVariant : new Variant({
                                 id: '',
-                                name: '',
-                                category: '',
-                                description: '',
-                                type: 'simple',
-                                hasVariants: false,
-                                barcode: '',
-                                baseUnit: '',
-                                defaultCostPrice: 0,
-                                defaultSellingPrice: 0,
+                                productId: product_id,
+                                sku: '',
+                                attributes: {},
+                                costPrice: 0,
+                                sellingPrice: 0,
                                 createdAt: new Date().toISOString(),
                                 updatedAt: new Date().toISOString()
                             })}

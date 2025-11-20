@@ -38,6 +38,8 @@ export interface IVariant {
   costPrice?: number;
   sellingPrice?: number;
 
+  product?: IProduct;
+
   createdAt: string;
   updatedAt: string;
 }
@@ -48,6 +50,9 @@ export interface IStock {
   productId: string;
   variantId?: string | null;
 
+  product?: Product;
+  variant?: Variant;
+
   // For simple = units  
   // For measured = weight/volume  
   // For variants = units per variant
@@ -55,7 +60,6 @@ export interface IStock {
 
   updatedAt: string;
 }
-
 
 // 🧾 Sale Transaction
 export interface ISale {
@@ -170,7 +174,7 @@ export class Variant implements IVariant {
   // Per-variant pricing (optional)
   costPrice: number;
   sellingPrice: number;
-
+  product?: IProduct | undefined;
   createdAt: string;
   updatedAt: string;
 
@@ -178,7 +182,8 @@ export class Variant implements IVariant {
     this.id = data.id;
     this.productId = data.productId;
     this.sku = data.sku;
-    this.attributes = parseAttributes(data.attributes);
+    this.attributes = parseAttributes(String(data.attributes));
+    if (data.product) this.product = new Product(data.product);
     this.costPrice = data.costPrice || 0;
     this.sellingPrice = data.sellingPrice || 0;
     this.createdAt = data.createdAt;
@@ -190,3 +195,46 @@ export class Variant implements IVariant {
   }
 }
 
+export class Supplier implements ISupplier {
+  id: string;
+  name: string;
+  contactPerson?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+
+  constructor(data: ISupplier) {
+    this.id = data.id;
+    this.name = data.name;
+    this.contactPerson = data.contactPerson;
+    this.phone = data.phone;
+    this.email = data.email;
+    this.address = data.address;
+    this.notes = data.notes;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
+  }
+}
+
+export class Stock implements IStock {
+  id: string;
+  productId: string;
+  variantId?: string | null;
+  product?: Product | undefined;
+  variant?: Variant | undefined;
+  quantity: number;
+  updatedAt: string;
+
+  constructor(data: IStock) {
+    this.id = data.id;
+    this.productId = data.productId;
+    this.variantId = data.variantId;
+    if (data.product) this.product = new Product(data.product);
+    if (data.variant) this.variant = new Variant(data.variant);
+    this.quantity = data.quantity;
+    this.updatedAt = data.updatedAt;
+  }
+}

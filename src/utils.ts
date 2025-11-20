@@ -1,3 +1,6 @@
+import React from "react";
+import type { OptionData } from "./components/Form";
+
 export const SCRIPT_ID = localStorage.getItem('VITE_GOOGLE_SCRIPT_ID');
 export const SCRIPT_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
 
@@ -46,6 +49,8 @@ export function jsonpRequest<T>(
 }
 
 export function parseAttributes(input: string): Record<string, string> {
+  if (!input || (input && typeof input === 'object')) return input;
+
   try {
     return JSON.parse(input);
   } catch {
@@ -57,3 +62,86 @@ export function parseAttributes(input: string): Record<string, string> {
     );
   }
 }
+
+export const useGenericChange = <T extends object>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>
+) => {
+  return React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value, type } = e.target;
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === "number" ? Number(value) : value,
+      }));
+    },
+    [setFormData]
+  );
+};
+
+export const usePhoneChange = <T extends object>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  maxLength: number = 10
+) => {
+  return React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      const digits = value.replace(/\D/g, "").slice(0, maxLength);
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: digits,
+      }));
+    },
+    [setFormData, maxLength]
+  );
+};
+
+export const useEmailChange = <T extends object>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>
+) => {
+  return React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: value.toLowerCase(),
+      }));
+    },
+    [setFormData]
+  );
+};
+
+export const useJSONChange = <T extends object>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>
+) => {
+  return React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+
+      setFormData(prev => ({
+        ...prev,
+        [name]: JSON.stringify(value),
+      }));
+    },
+    [setFormData]
+  );
+};
+
+export const formatOptions = (options: string[] | OptionData[]): OptionData[] => {
+  if (!options || options.length === 0) return [];
+
+  // If first element is an object → assume already OptionData[]
+  if (typeof options[0] === "object" && options[0] !== null) {
+    return options as OptionData[];
+  }
+
+  // If string[] → convert to OptionData[]
+  return (options as string[]).map(str => ({
+    value: str,
+    label: str,
+  }));
+};
+
