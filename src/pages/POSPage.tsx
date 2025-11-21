@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DarkModeToggle from "../components/DarkModeToggle";
 import { getVariants } from "../models/variants";
 import { Variant } from "../types/models";
+import Loader from "../components/Loader";
 
 const POSPage = () => {
     const [posItems, setPOSItems] = useState<Variant[]>([]);
@@ -27,6 +28,7 @@ const POSPage = () => {
     };
 
     return <div className="p-4 h-screen bg-gray-100 dark:bg-gray-950 relative">
+        <Loader loading={loading}/>
         <div className="flex flex-row justify-between items-center px-10">
             <div
                 className="bg-[url('/Storix/pos-banner.png')] h-12 w-36 bg-cover bg-center rounded"

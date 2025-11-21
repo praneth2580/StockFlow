@@ -223,8 +223,8 @@ const Form = <T extends object>({
             <JSONInput
               id={key}
               name={key}
-              theme="dark_vscode_tribute"
-              style={{ body: { backgroundColor: "#1f2937" } }}
+              // theme="dark_vscode_tribute"
+              // style={{ body: { backgroundColor: "#1f2937" } }}
               value={parseAttributes(JSON.stringify(formData[key] ?? "{}"))}
               onChange={(data) => {
                 setFormData((prev) => ({
