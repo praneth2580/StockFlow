@@ -9,6 +9,7 @@ import { getVariants } from '../models/variants';
 import Modal from '../components/Modal';
 import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
 import { createStock, getStocks } from '../models/stock';
+import Loader from '../components/Loader';
 
 const StockPage = () => {
     const [stocks, setStocks] = useState<Stock[]>([]);
@@ -68,16 +69,18 @@ const StockPage = () => {
     const columns = [
         { header: 'ID', accessor: 'id' as keyof Stock },
         { header: 'Product Name', accessor: 'product.name' as keyof Stock },
-        { header: 'Variant', accessor: (row: Stock) => row.variant?.attributes ? 
-            <div className='flex gap-1 wrap'>{Object.entries(row.variant.attributes)?.map(_variant => { return <div className='rounded-full bg-blue-400 w-fit py-1 px-2 text-white uppercase font-bold'>{_variant[1]}</div> })}</div> : 
-            "" },
+        {
+            header: 'Variant', accessor: (row: Stock) => row.variant?.attributes ?
+                <div className='flex gap-1 wrap'>{Object.entries(row.variant.attributes)?.map(_variant => { return <div className='rounded-full bg-blue-400 w-fit py-1 px-2 text-white uppercase font-bold'>{_variant[1]}</div> })}</div> :
+                ""
+        },
         { header: 'Quantity', accessor: 'quantity' as keyof Stock },
         {
             header: 'Actions',
             accessor: (row: Stock) => (
                 <button
                     onClick={() => handleDeleteInitiated(row.id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-red-600 hover:text-red-800 dark:text-red-200 dark:hover:text-red-600"
                 >
                     Delete
                 </button>
@@ -120,69 +123,67 @@ const StockPage = () => {
         setConfirmModalData({
             title: 'Confirm Action' + id,
             body: 'Do you want to delete this Product',
-            onSuccess: () => {}
+            onSuccess: () => { }
         })
     }
 
     return (
         <>
-            {loading ? (
-                <div className="flex justify-center items-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <Loader loading={loading}/>
+            <div className="container mx-auto p-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Stock</h1>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="px-4 py-2 text-sm font-medium text-white 
+                                bg-blue-500 hover:bg-blue-600 
+                                dark:bg-blue-600 dark:hover:bg-blue-700 
+                                rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Add Stock
+                    </button>
                 </div>
-            ) : (
-                <div className="container mx-auto p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold">Stock</h1>
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Add Stock
-                        </button>
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
                     </div>
+                )}
 
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
+                {loading ? <></> : (
+                    <Table
+                        columns={columns}
+                        data={stocks}
+                    />
+                )}
 
-                    {loading ? <></> : (
-                        <Table
-                            columns={columns}
-                            data={stocks}
-                        />
-                    )}
+                <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Stock'>
+                    <Form
+                        fields={stockFormFields}
+                        onSubmit={handleAddStock}
+                        onClose={() => setShowModal(false)}
+                        initialData={new Stock({
+                            id: '',
+                            productId: '',
+                            variantId: '',
+                            quantity: 0,
+                            updatedAt: new Date().toISOString()
+                        })}
+                    />
+                </Modal>
 
-                    <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Stock'>
-                        <Form
-                            fields={stockFormFields}
-                            onSubmit={handleAddStock}
-                            onClose={() => setShowModal(false)}
-                            initialData={new Stock({
-                                id: '',
-                                productId: '',
-                                variantId: '',
-                                quantity: 0,
-                                updatedAt: new Date().toISOString()
-                            })}
-                        />
-                    </Modal>
-
-                    {/* <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
+                {/* <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
                         <VariantsPage product_id={selectedProduct || ''} />
                     </Modal> */}
-                    <ConfirmModal
-                        show={confirmModalData != null}
-                        size='sm'
-                        onClose={() => setConfirmModalData(null)}
-                        title={confirmModalData?.title || ""}
-                        body={confirmModalData?.body || ""}
-                        onSuccess={confirmModalData?.onSuccess}
-                    />
-                </div>
-            )}
+                <ConfirmModal
+                    show={confirmModalData != null}
+                    size='sm'
+                    onClose={() => setConfirmModalData(null)}
+                    title={confirmModalData?.title || ""}
+                    body={confirmModalData?.body || ""}
+                    onSuccess={confirmModalData?.onSuccess}
+                />
+            </div>
         </>
     );
 };

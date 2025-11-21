@@ -9,6 +9,7 @@ import { createVariant, deleteVariant, getVariants, updateVariant } from '../mod
 import Modal from '../components/Modal';
 import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
 import { formatOptions } from '../utils';
+import Loader from '../components/Loader';
 
 const ProductPage = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -57,7 +58,7 @@ const ProductPage = () => {
             accessor: (row: Product) => (
                 <button
                     onClick={() => handleViewVarient(row.id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-cyan-600 hover:text-cyan-800 dark:text-cyan-200 dark:hover:text-cyan-600"
                 >
                     View
                 </button>
@@ -69,13 +70,13 @@ const ProductPage = () => {
                 <div className='flex gap-2'>
                     <button
                         onClick={() => setEditProduct(row)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-200 dark:hover:text-blue-600"
                     >
                         Edit
                     </button>
                     <button
                         onClick={() => handleDeleteInitiated(row.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 dark:text-red-200 dark:hover:text-red-600"
                     >
                         Delete
                     </button>
@@ -178,70 +179,68 @@ const ProductPage = () => {
 
     return (
         <>
-            {loading ? (
-                <div className="flex justify-center items-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <Loader loading={loading} />
+            <div className="container mx-auto p-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Product</h1>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="px-4 py-2 text-sm font-medium text-white 
+                                bg-blue-500 hover:bg-blue-600 
+                                dark:bg-blue-600 dark:hover:bg-blue-700 
+                                rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Add Product
+                    </button>
                 </div>
-            ) : (
-                <div className="container mx-auto p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold">Product</h1>
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Add Product
-                        </button>
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
                     </div>
+                )}
 
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
-
-                    {loading ? <></> : (
-                        <Table
-                            columns={columns}
-                            data={products}
-                        />
-                    )}
-
-                    <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
-                        <Form<Product>
-                            fields={productFormFields}
-                            onSubmit={editProduct ? handleUpdateProduct : handleAddProduct}
-                            onClose={() => setShowModal(false)}
-                            initialData={editProduct ? editProduct : new Product({
-                                id: '',
-                                name: '',
-                                category: '',
-                                description: '',
-                                type: 'simple',
-                                hasVariants: false,
-                                barcode: '',
-                                baseUnit: '',
-                                defaultCostPrice: 0,
-                                defaultSellingPrice: 0,
-                                createdAt: new Date().toISOString(),
-                                updatedAt: new Date().toISOString()
-                            })}
-                        />
-                    </Modal>
-
-                    <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
-                        <VariantsPage product_id={selectedProduct || ''} />
-                    </Modal>
-                    <ConfirmModal
-                        show={confirmModalData != null}
-                        size='sm'
-                        onClose={() => setConfirmModalData(null)}
-                        title={confirmModalData?.title || ""}
-                        body={confirmModalData?.body || ""}
-                        onSuccess={confirmModalData?.onSuccess}
+                {loading ? <></> : (
+                    <Table
+                        columns={columns}
+                        data={products}
                     />
-                </div>
-            )}
+                )}
+
+                <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
+                    <Form<Product>
+                        fields={productFormFields}
+                        onSubmit={editProduct ? handleUpdateProduct : handleAddProduct}
+                        onClose={() => setShowModal(false)}
+                        initialData={editProduct ? editProduct : new Product({
+                            id: '',
+                            name: '',
+                            category: '',
+                            description: '',
+                            type: 'simple',
+                            hasVariants: false,
+                            barcode: '',
+                            baseUnit: '',
+                            defaultCostPrice: 0,
+                            defaultSellingPrice: 0,
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        })}
+                    />
+                </Modal>
+
+                <Modal show={selectedProduct != null} size='xl' onClose={() => setSelectedProduct(null)} title='Variants'>
+                    <VariantsPage product_id={selectedProduct || ''} />
+                </Modal>
+                <ConfirmModal
+                    show={confirmModalData != null}
+                    size='sm'
+                    onClose={() => setConfirmModalData(null)}
+                    title={confirmModalData?.title || ""}
+                    body={confirmModalData?.body || ""}
+                    onSuccess={confirmModalData?.onSuccess}
+                />
+            </div>
         </>
     );
 };
@@ -285,7 +284,7 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
         {
             header: 'Attributes', accessor: (row: Variant) => <div className='flex gap-1 wrap'>{
                 Object.entries(row.attributes)?.map(_variant => {
-                    return <div className='rounded-full bg-blue-400 w-fit py-1 px-2 text-white uppercase font-bold'>{_variant[1]}</div>
+                    return <div className='rounded-full bg-blue-400 dark:bg-blue-200 w-fit py-1 px-2 text-white dark:text-black uppercase font-bold'>{_variant[1]}</div>
                 })}</div>
         },
         { header: 'Cost Price', accessor: 'costPrice' as keyof Variant },
@@ -296,13 +295,13 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setEditVariant(row)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-200 dark:hover:text-blue-600"
                     >
                         Edit
                     </button>
                     <button
                         onClick={() => handleDeleteVariant(row.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 dark:text-red-200 dark:hover:text-red-600"
                     >
                         Delete
                     </button>
@@ -403,7 +402,10 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
                         <h1 className="text-2xl font-bold"></h1>
                         <button
                             onClick={() => setShowForm(true)}
-                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            className="px-4 py-2 text-sm font-medium text-white 
+                                bg-blue-500 hover:bg-blue-600 
+                                dark:bg-blue-600 dark:hover:bg-blue-700 
+                                rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Add Variant
                         </button>
@@ -415,7 +417,7 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
                         </div>
                     )}
 
-                    {loading ? (
+                    {/* {loading ? (
                         <div className="flex justify-center items-center h-32">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                         </div>
@@ -424,7 +426,12 @@ const VariantsPage = ({ product_id }: { product_id: string }) => {
                             columns={columns}
                             data={variants}
                         />
-                    )}
+                    )} */}
+                    <Loader loading={loading} />
+                    <Table
+                        columns={columns}
+                        data={variants}
+                    />
                 </div>
             )}
         </div>

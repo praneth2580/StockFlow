@@ -10,8 +10,8 @@ interface JSONInputProps {
 }
 
 export const JSONInput: React.FC<JSONInputProps> = ({
-//   id, 
-//   name,
+  //   id, 
+  //   name,
   value = {},
   onChange,
 }) => {
@@ -51,27 +51,28 @@ export const JSONInput: React.FC<JSONInputProps> = ({
   );
 
   return (
-    <div className="p-3 w-full border rounded-lg bg-gray-50 w-full">
-      {/* <h3 className="font-semibold mb-3">JSON Key-Value Editor</h3> */}
-
+    <div className="p-3 w-full border rounded-lg bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
       <div className="flex flex-col gap-3">
+
         {rows.map(([k, v], index) => (
           <div
             key={index}
-            className="grid grid-cols-3 gap-2 items-center"
+            className="flex flex-row gap-1 items-center"
           >
             {/* Key Input */}
             <input
               type="text"
               placeholder="Key"
               value={k}
-              onChange={(e) =>
-                handleRowChange(index, e.target.value, v)
-              }
-              className="border p-2 rounded"
+              onChange={(e) => handleRowChange(index, e.target.value, v)}
+              className="border p-2 rounded
+                       bg-white dark:bg-gray-800
+                       border-gray-300 dark:border-gray-600
+                       text-gray-900 dark:text-gray-200 w-full
+                       placeholder-gray-400 dark:placeholder-gray-500"
             />
 
-            {/* Value Input (string or number) */}
+            {/* Value Input */}
             <input
               type="text"
               placeholder="Value"
@@ -79,31 +80,43 @@ export const JSONInput: React.FC<JSONInputProps> = ({
               onChange={(e) => {
                 const value = e.target.value;
                 const parsed: JSONValue =
-                  value.trim() === "" ? "" : isNaN(Number(value)) ? value : Number(value);
-
+                  value.trim() === ""
+                    ? ""
+                    : isNaN(Number(value))
+                      ? value
+                      : Number(value);
                 handleRowChange(index, k, parsed);
               }}
-              className="border p-2 rounded"
+              className="border p-2 rounded
+                       bg-white dark:bg-gray-800
+                       border-gray-300 dark:border-gray-600
+                       text-gray-900 dark:text-gray-200 w-full
+                       placeholder-gray-400 dark:placeholder-gray-500"
             />
 
             {/* Delete */}
             <button
               onClick={() => removeRow(index)}
-              className="bg-red-500 text-white px-2 py-1 rounded"
+              className="bg-red-500 hover:bg-red-600
+                       text-white px-2 py-1 rounded
+                       transition-colors w-fit font-bold"
             >
-              X
+              ✕
             </button>
           </div>
         ))}
+
       </div>
 
       {/* Add Row */}
       <button
         onClick={addRow}
         type="button"
-        className="mt-3 bg-blue-600 text-white w-full py-1 px-2 rounded"
+        className="mt-3 bg-blue-600 hover:bg-blue-700
+                 text-white w-full py-2
+                 rounded font-medium transition-colors"
       >
-        ＋
+        ＋ Add
       </button>
     </div>
   );

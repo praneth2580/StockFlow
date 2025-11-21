@@ -61,7 +61,7 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
     if (searchTerm) {
       filtered = filtered.filter(item =>
         columns.some(column => {
-          const value = typeof column.accessor === 'function' 
+          const value = typeof column.accessor === 'function'
             ? column.accessor(item)
             : item[column.accessor];
           return value && value.toString().toLowerCase().includes(searchTerm.toLowerCase());
@@ -121,13 +121,17 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
+    <div className="bg-white dark:bg-gray-900 shadow-md rounded-lg p-6">
       <div className="flex justify-between items-center mb-6 flex-wrap">
+        {/* Search */}
         <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
           <input
             type="text"
             placeholder="Global Search..."
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 dark:border-gray-700 
+            rounded-lg bg-white dark:bg-gray-800 
+            text-gray-900 dark:text-gray-200 
+            focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={e => {
               setSearchTerm(e.target.value);
@@ -135,61 +139,129 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
             }}
           />
         </div>
-        <div className="flex w-full md:w-auto space-x-2">
+
+        {/* Filters */}
+        <div
+          className="
+            flex items-center w-full md:w-auto
+            rounded-xl border border-gray-300 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            overflow-hidden
+            focus-within:ring-2 focus-within:ring-blue-500
+            transition
+          "
+        >
+          {/* Column Select */}
           <select
             value={filterColumn as string}
-            onChange={e => setFilterColumn(e.target.value as keyof T)}
-            className="p-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setFilterColumn(e.target.value as keyof T)}
+            className="
+              px-4 py-2.5 min-w-[150px]
+              bg-transparent
+              border-none outline-none
+              text-gray-900 dark:text-gray-200
+            "
           >
-            <option value="">Select Column</option>
-            {columns.map(col => (
-              <option key={String(col.accessor)} value={String(col.accessor)}>{col.header}</option>
+            <option className='bg-white dark:bg-gray-800' value="">Column</option>
+            {columns.map((col) => (
+              <option className='bg-white dark:bg-gray-800' key={String(col.accessor)} value={String(col.accessor)}>
+                {col.header}
+              </option>
             ))}
           </select>
+
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
+
+          {/* Operator Select */}
           <select
             value={filterOperator}
-            onChange={e => setFilterOperator(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setFilterOperator(e.target.value)}
             disabled={!filterColumn}
+            className="
+              px-4 py-2.5 min-w-[130px]
+              bg-transparent
+              border-none outline-none
+              text-gray-900 dark:text-gray-200
+              disabled:opacity-40 disabled:cursor-not-allowed
+            "
           >
-            <option value="">Select Operator</option>
-            {operators.map(op => (
-              <option key={op.value} value={op.value}>{op.label}</option>
+            <option className='bg-white dark:bg-gray-800' value="">Operator</option>
+            {operators.map((op) => (
+              <option className='bg-white dark:bg-gray-800' key={op.value} value={op.value}>
+                {op.label}
+              </option>
             ))}
           </select>
+
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
+
+          {/* Value Input */}
           <input
             type="text"
             placeholder="Value"
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={filterValue}
-            onChange={e => setFilterValue(e.target.value)}
+            onChange={(e) => setFilterValue(e.target.value)}
             disabled={!filterOperator}
+            className="
+              px-4 py-2.5 min-w-[150px]
+              bg-transparent
+              border-none outline-none
+              text-gray-900 dark:text-gray-200
+              disabled:opacity-40 disabled:cursor-not-allowed
+            "
           />
+
+          {/* Divider */}
+          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600" />
+
+          {/* Clear Button */}
           <button
             onClick={handleClearFilter}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="
+              px-4 py-2.5 font-medium
+              bg-transparent
+              text-red-600 dark:text-red-400
+              hover:bg-red-50 dark:hover:bg-red-900/20
+              transition
+            "
           >
             Clear
           </button>
         </div>
+
       </div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="min-w-full bg-white">
-          <thead className="bg-gray-50">
+
+      {/* Table */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+        <table className="min-w-full bg-white dark:bg-gray-900">
+          <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
               {columns.map(col => (
-                <th key={String(col.accessor)} className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th
+                  key={String(col.accessor)}
+                  className="px-6 py-3 text-left text-xs font-semibold 
+                  text-gray-600 dark:text-gray-300 uppercase tracking-wider"
+                >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {paginatedData.map((row, rowIndex) => (
-              <tr key={rowIndex} className="hover:bg-gray-100">
+              <tr
+                key={rowIndex}
+                className="hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
                 {columns.map(col => (
-                  <td key={String(col.accessor)} className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {/* {typeof col.accessor === 'function' ? col.accessor(row) : col.accessor.toString().includes(".") ? String(row[col.accessor.toString().split(".")[0]][col.accessor.toString().split(".")[1]]) : String(row[col.accessor])} */}
+                  <td
+                    key={String(col.accessor)}
+                    className="px-6 py-4 whitespace-nowrap text-sm 
+                    text-gray-800 dark:text-gray-200"
+                  >
                     {getValue(row, col.accessor)}
                   </td>
                 ))}
@@ -198,25 +270,40 @@ const Table = <T extends object>({ columns, data, itemsPerPage = 10 }: TableProp
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
       <div className="flex justify-between items-center mt-6">
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-300">
           Showing {paginatedData.length} of {filteredData.length} results
         </div>
+
         <div className="flex items-center space-x-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm font-medium 
+            text-gray-700 dark:text-gray-200 
+            bg-white dark:bg-gray-800 
+            border border-gray-300 dark:border-gray-700 
+            rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 
+            disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
-          <span className="text-sm text-gray-700">
+
+          <span className="text-sm text-gray-700 dark:text-gray-300">
             Page {currentPage} of {totalPages}
           </span>
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm font-medium 
+            text-gray-700 dark:text-gray-200 
+            bg-white dark:bg-gray-800 
+            border border-gray-300 dark:border-gray-700 
+            rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 
+            disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>

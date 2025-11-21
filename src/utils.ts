@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { OptionData } from "./components/Form";
 
 export const SCRIPT_ID = localStorage.getItem('VITE_GOOGLE_SCRIPT_ID');
@@ -143,3 +143,32 @@ export const formatOptions = (options: string[] | OptionData[]): OptionData[] =>
   }));
 };
 
+export function useDarkMode() {
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return false;
+
+    // Check localStorage first
+    const stored = localStorage.getItem("dark-mode");
+    if (stored !== null) return stored === "true";
+
+    // Default to light mode if nothing stored
+    return false;
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    // Force dark or light mode regardless of system preference
+    if (isDark) {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark"; // <- force prefers-color-scheme
+    } else {
+      root.classList.remove("dark");
+      root.style.colorScheme = "light"; // <- force prefers-color-scheme
+    }
+
+    localStorage.setItem("dark-mode", String(isDark));
+  }, [isDark]);
+
+  return [isDark, setIsDark] as const;
+}

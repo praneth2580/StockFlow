@@ -7,6 +7,7 @@ import { Supplier, type ISupplier } from '../types/models';
 import { createSupplier, deleteSupplier, getSuppliers } from '../models/supplier';
 import Modal from '../components/Modal';
 import { ConfirmModal, type ModalData } from '../components/ConfirmModal';
+import Loader from '../components/Loader';
 
 const SuppliersPage = () => {
     const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -55,10 +56,10 @@ const SuppliersPage = () => {
 
     const supplierFormFields: FormField<Supplier>[] = [
         { name: 'name', label: 'Supplier Name', type: 'text' },
-        { name: 'contactPerson', label: 'Contact Person', type: 'text'},
+        { name: 'contactPerson', label: 'Contact Person', type: 'text' },
         { name: 'phone', label: 'Phone', type: 'phone' },
         { name: 'email', label: 'Email', type: 'email' },
-        { name: 'address', label: 'Address', type: 'text'},
+        { name: 'address', label: 'Address', type: 'text' },
         { name: 'notes', label: 'Notes', type: 'text' }
     ];
 
@@ -107,63 +108,61 @@ const SuppliersPage = () => {
 
     return (
         <>
-            {loading ? (
-                <div className="flex justify-center items-center h-32">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <Loader loading={loading} />
+            <div className="container mx-auto p-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Supplier</h1>
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="px-4 py-2 text-sm font-medium text-white 
+                                bg-blue-500 hover:bg-blue-600 
+                                dark:bg-blue-600 dark:hover:bg-blue-700 
+                                rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Add Supplier
+                    </button>
                 </div>
-            ) : (
-                <div className="container mx-auto p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <h1 className="text-2xl font-bold">Supplier</h1>
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Add Supplier
-                        </button>
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
                     </div>
+                )}
 
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                            {error}
-                        </div>
-                    )}
-
-                    {loading ? <></> : (
-                        <Table
-                            columns={columns}
-                            data={suppliers}
-                        />
-                    )}
-
-                    <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
-                        <Form
-                            fields={supplierFormFields}
-                            onSubmit={handleAddProduct}
-                            onClose={() => setShowModal(false)}
-                            initialData={new Supplier({
-                                id: '',
-                                name: '',
-                                contactPerson: '',
-                                phone: '',
-                                email: '',
-                                address: '',
-                                notes: '',
-                                createdAt: new Date().toISOString(),
-                                updatedAt: new Date().toISOString()
-                            })}
-                        />
-                    </Modal>
-                    <ConfirmModal
-                        show={confirmModalData != null}
-                        size='sm'
-                        onClose={() => setConfirmModalData(null)}
-                        title={confirmModalData?.title || ""}
-                        body={confirmModalData?.body || ""}
-                        onSuccess={confirmModalData?.onSuccess}
+                {loading ? <></> : (
+                    <Table
+                        columns={columns}
+                        data={suppliers}
                     />
-                </div>
-            )}
+                )}
+
+                <Modal show={showModal} size='xl' onClose={() => setShowModal(false)} title='Add New Product'>
+                    <Form
+                        fields={supplierFormFields}
+                        onSubmit={handleAddProduct}
+                        onClose={() => setShowModal(false)}
+                        initialData={new Supplier({
+                            id: '',
+                            name: '',
+                            contactPerson: '',
+                            phone: '',
+                            email: '',
+                            address: '',
+                            notes: '',
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        })}
+                    />
+                </Modal>
+                <ConfirmModal
+                    show={confirmModalData != null}
+                    size='sm'
+                    onClose={() => setConfirmModalData(null)}
+                    title={confirmModalData?.title || ""}
+                    body={confirmModalData?.body || ""}
+                    onSuccess={confirmModalData?.onSuccess}
+                />
+            </div>
         </>
     );
 };

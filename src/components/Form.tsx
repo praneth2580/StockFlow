@@ -103,22 +103,15 @@ const Form = <T extends object>({
    */
   const renderInput = (field: FormField<T>) => {
     const key = String(field.name);
-    console.log(field)
 
     switch (field.type) {
       case "select": {
-        console.log("key, ", key)
         const isDynamic = field.dependsOn && field.getOptions;
-
         const dynamicKey = String(field.name);
 
         const finalOptions = isDynamic
           ? dynamicOptions[dynamicKey] ?? []
           : field.options ?? [];
-
-
-        // console.log("SELECT RENDER → key:", dynamicKey, key);
-        // console.log("SELECT OPTIONS:", finalOptions);
 
         return (
           <select
@@ -126,7 +119,13 @@ const Form = <T extends object>({
             name={key}
             value={formData[key] ?? ""}
             onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg"
+            className="
+            p-3 rounded-lg w-full
+            border border-gray-300 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
           >
             <option value="">Select an option</option>
             {finalOptions.map((opt) => (
@@ -147,13 +146,19 @@ const Form = <T extends object>({
             type={field.type}
             value={formData[key] ?? ""}
             onChange={handleChange}
-            className="p-3 border border-gray-300 rounded-lg"
+            className="
+            p-3 rounded-lg w-full
+            border border-gray-300 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
           />
         );
 
       case "radio":
         return (
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-3 items-center flex-wrap">
             {field.options?.map((opt) => (
               <div key={opt.value} className="flex items-center gap-2">
                 <input
@@ -163,8 +168,14 @@ const Form = <T extends object>({
                   value={opt.value}
                   checked={formData[key] === opt.value}
                   onChange={handleChange}
+                  className="accent-blue-500"
                 />
-                <label htmlFor={key + "_" + opt.value}>{opt.label}</label>
+                <label
+                  htmlFor={key + "_" + opt.value}
+                  className="text-gray-800 dark:text-gray-200"
+                >
+                  {opt.label}
+                </label>
               </div>
             ))}
           </div>
@@ -178,7 +189,13 @@ const Form = <T extends object>({
             type="text"
             value={formData[key] ?? ""}
             onChange={handlePhoneChange}
-            className="p-3 border border-gray-300 rounded-lg"
+            className="
+            p-3 rounded-lg w-full
+            border border-gray-300 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
           />
         );
 
@@ -190,23 +207,33 @@ const Form = <T extends object>({
             type="email"
             value={formData[key] ?? ""}
             onChange={handleEmailChange}
-            className="p-3 border border-gray-300 rounded-lg"
+            className="
+            p-3 rounded-lg w-full
+            border border-gray-300 dark:border-gray-700
+            bg-white dark:bg-gray-800
+            text-gray-900 dark:text-gray-200
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
           />
         );
 
       case "json":
         return (
-          <JSONInput
-            id={key}
-            name={key}
-            value={parseAttributes(JSON.stringify(formData[key] ?? "{}"))}
-            onChange={(data) => {
-              setFormData((prev) => ({
-                ...prev,
-                [key]: JSON.stringify(data),
-              }));
-            }}
-          />
+          <div className="dark:bg-gray-800 dark:border dark:border-gray-700 rounded-lg p-2">
+            <JSONInput
+              id={key}
+              name={key}
+              theme="dark_vscode_tribute"
+              style={{ body: { backgroundColor: "#1f2937" } }}
+              value={parseAttributes(JSON.stringify(formData[key] ?? "{}"))}
+              onChange={(data) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  [key]: JSON.stringify(data),
+                }));
+              }}
+            />
+          </div>
         );
 
       default:
@@ -217,12 +244,16 @@ const Form = <T extends object>({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-5xl mx-auto p-6 bg-white rounded-xl"
+      className="
+      w-full max-w-5xl mx-auto p-6 rounded-xl
+      bg-white dark:bg-gray-900
+      border border-gray-200 dark:border-gray-700
+    "
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {fields.map((field) => (
           <div key={String(field.name)} className="flex flex-col">
-            <label className="mb-2 text-sm font-semibold text-gray-700">
+            <label className="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
               {field.label}
             </label>
             {renderInput(field)}
@@ -230,23 +261,34 @@ const Form = <T extends object>({
         ))}
       </div>
 
+      {/* Buttons */}
       <div className="flex gap-4 items-center px-4 py-3">
         <button
           type="submit"
-          className="mt-8 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg"
+          className="
+          mt-8 w-full py-3 rounded-lg font-semibold text-lg
+          bg-blue-600 hover:bg-blue-700
+          text-white transition
+        "
         >
           Submit
         </button>
+
         <button
           type="button"
           onClick={onClose}
-          className="mt-8 w-full bg-slate-500 text-white py-3 rounded-lg font-semibold text-lg"
+          className="
+          mt-8 w-full py-3 rounded-lg font-semibold text-lg
+          bg-slate-500 hover:bg-slate-600
+          text-white transition
+        "
         >
           Close
         </button>
       </div>
     </form>
   );
+
 };
 
 export default Form;

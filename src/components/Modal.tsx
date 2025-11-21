@@ -22,15 +22,35 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, title, children, size = 'l
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 bg-opacity-50 flex justify-center items-center p-4">
-      <div className={`bg-white rounded-lg p-6 w-full ${sizeClasses[size]} flex flex-col max-h-[80vh]`}>
-        <div className="flex justify-between items-center border-b pb-2 mb-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-800 text-2xl">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center p-4">
+      <div
+        className={`
+        rounded-lg p-6 w-full ${sizeClasses[size]}
+        flex flex-col max-h-[80vh]
+        bg-white dark:bg-gray-900
+        border border-gray-200 dark:border-gray-700
+        shadow-xl dark:shadow-2xl
+        transition-colors
+      `}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center border-b border-gray-300 dark:border-gray-700 pb-2 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+            {title}
+          </h2>
+
+          <button
+            onClick={onClose}
+            className="text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-2xl transition"
+          >
             &times;
           </button>
         </div>
-        <div className="overflow-y-auto">{children}</div>
+
+        {/* Body */}
+        <div className="overflow-y-auto text-gray-800 dark:text-gray-200">
+          {children}
+        </div>
       </div>
     </div>
   );
